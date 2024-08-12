@@ -1,8 +1,12 @@
-const { TweetServices } = require('../repository/index');
+const {
+	TweetRepository,
+	HashtagRepository,
+} = require('../repository/index');
 
 class TweetServices {
 	constructor() {
-		this.tweetServices = new TweetServices();
+		this.tweetRepository = new TweetRepository();
+		this.HashtagRepository = new HashtagRepository();
 	}
 
 	async createTweet(data) {
@@ -12,16 +16,37 @@ class TweetServices {
 				/([#＃]+)([0-9A-Z_]*[A-Z_]+[a-z0-9_üÀ-ÖØ-öø-ÿ]*)/gi
 			);
 			console.log(tags);
-			tags = tags.map((tag)=> tag.substring(1)); 
-			const tweet = await this.tweetServices.create(data);
-			//TODO: create a hashtags 
+			tags = tags.map((tag) => tag.substring(1));
+			const tweet = await this.tweetRepository.create(data);
+			let alreadyPresentTags =
+				await this.HashtagRepository.findByName(tags);
+			let titleOfPresentTags = alreadyPresentTags.map(
+				(tag) => tag.title
+			);
+			let newTags = tags.filter(
+				(tag) => !titleOfPresentTags.includes(tag)
+			);
+
+			newTags = newTags.map((tag) => {
+				return { title: tag.title, tweets: [tweet.id] };
+			});
+
+			await this.HashtagRepository.bulkCreate(
+				newTags
+			);
+
+			alreadyPresentTags.forEach((tag) => {
+				tag.tweets.push(tweet.id);
+				tag.save();
+			});
+			//TODO: create a hashtags
 			// 1. check the tweet is existing or not
 			/**
 			 * i. bulcreate in mongoose
 			 * ii. filter title of hashtag based on multiple tags
-			 * iii. How to add the tweet id inside all the hashtags 
+			 * iii. How to add the tweet id inside all the hashtags
 			 * */
-			
+
 			// 2. create new hashtags if not exist and add tweet_id to hashtags table return tweet;
 
 			return tweet;
@@ -33,7 +58,7 @@ class TweetServices {
 
 	async getTweet(id) {
 		try {
-			const tweet = await this.tweetServices.getTweet(id);
+			const tweet = await this.tweetRepository.getTweet(id);
 			return tweet;
 		} catch (error) {
 			console.log('some thing wrong in services layer');
@@ -43,9 +68,8 @@ class TweetServices {
 
 	async getTweetWithComment(id) {
 		try {
-			const tweet = await this.tweetServices.getTweetWithComment(
-				id
-			);
+			const tweet =
+				await this.tweetRepository.getTweetWithComment(id);
 			return tweet;
 		} catch (error) {
 			console.log('some thing wrong in services layer');
@@ -55,7 +79,7 @@ class TweetServices {
 
 	async deleteTweet(id) {
 		try {
-			const tweet = await this.tweetServices.destroy(id);
+			const tweet = await this.tweetRepository.destroy(id);
 			return tweet;
 		} catch (error) {
 			console.log('some thing wrong in services layer');
@@ -65,7 +89,7 @@ class TweetServices {
 
 	async getAllTweets(offset, limit) {
 		try {
-			const tweets = await this.tweetServices.getAll(
+			const tweets = await this.tweetRepository.getAll(
 				offset,
 				limit
 			);

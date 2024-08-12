@@ -7,7 +7,7 @@ config({
 			: '.env',
 });
 
-const port = process.env.NODE_ENV;
+const port = process.env.PORT;
 const mongoURL = process.env.MONGO_URL;
 const databaseName = 'twitter';
 

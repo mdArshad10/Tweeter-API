@@ -1,5 +1,7 @@
-const TweetServices = require('../services/tweet.services');
+const TweetRepository = require('./tweet.repository.js');
+const HashtagRepository = require('./tweet.repository.js');
 
 module.exports = {
-	TweetServices,
+	TweetRepository,
+	HashtagRepository,
 };
