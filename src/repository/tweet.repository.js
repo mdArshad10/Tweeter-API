@@ -1,6 +1,10 @@
 const { Tweet } = require('../models/index.js');
+const CrudRepository = require('./CrudRepository');
 
-class TweetRepository {
+class TweetRepository extends CrudRepository {
+	constructor() {
+		super(Tweet);
+	}
 	async create(data) {
 		try {
 			const response = await Tweet.create(data);
@@ -14,26 +18,6 @@ class TweetRepository {
 	async get(id) {
 		try {
 			const response = await Tweet.findById(id);
-			return response;
-		} catch (error) {
-			console.log('some error on repository level');
-			throw error;
-		}
-	}
-
-	async getWithComment(id) {
-		try {
-			const response = await Tweet.findById(id);
-			return response;
-		} catch (error) {
-			console.log('some error on repository level');
-			throw error;
-		}
-	}
-
-	async destroy(id) {
-		try {
-			const response = await Tweet.findByIdAndDelete(id);
 			return response;
 		} catch (error) {
 			console.log('some error on repository level');

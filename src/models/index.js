@@ -1,4 +1,12 @@
+const User = require('./User.model.js');
+const Like = require('./Like.model.js');
+const Tweet = require('./Tweet.model.js');
+const Hashtag = require('./Hashtag.model.js');
+
 module.exports = {
-	Tweet: require('./Tweet.model.js'),
-	Hashtag: require('./Hashtag.model.js'),
+	Tweet,
+	Hashtag,
+	User,
+	Like
+	
 };
