@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const { port } = require('./constant.js');
 const db = require('./config/db.js');
+const apiRoutes = require('./routes');
+const { StatusCodes } = require('http-status-codes');
 
 // express app
 const app = express();
@@ -22,9 +24,13 @@ app.use(
 	})
 );
 
-app.get('/api/v1/test', (req, res, next) => {
-	res.status(200).json({
-		message: 'this is for testing',
+app.use('/api', apiRoutes);
+app.use('*', (req, res, next) => {
+	return res.status(StatusCodes.ACCEPTED).json({
+		success: true,
+		message: 'Page not found',
+		data: null,
+		error: null,
 	});
 });
 

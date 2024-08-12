@@ -16,7 +16,8 @@ class TweetServices {
 				/([#＃]+)([0-9A-Z_]*[A-Z_]+[a-z0-9_üÀ-ÖØ-öø-ÿ]*)/gi
 			);
 			console.log(tags);
-			tags = tags.map((tag) => tag.substring(1));
+			tags = tags.map((tag) => tag.substring(1).toLowerCase());
+
 			const tweet = await this.tweetRepository.create(data);
 			let alreadyPresentTags =
 				await this.HashtagRepository.findByName(tags);
@@ -31,9 +32,7 @@ class TweetServices {
 				return { title: tag.title, tweets: [tweet.id] };
 			});
 
-			await this.HashtagRepository.bulkCreate(
-				newTags
-			);
+			await this.HashtagRepository.bulkCreate(newTags);
 
 			alreadyPresentTags.forEach((tag) => {
 				tag.tweets.push(tweet.id);
