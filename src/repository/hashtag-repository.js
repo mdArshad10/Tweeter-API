@@ -62,4 +62,4 @@ class HashtagRepository {
 	}
 }
 
-module.exports = TweetRepository;
+module.exports = HashtagRepository;
